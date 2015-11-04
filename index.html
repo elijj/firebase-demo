@@ -27,7 +27,7 @@
 	</head>
 
 	<!-- Initiate app and controller on body -->
-	<body >
+	<body ng-app='myApp' ng-controller='myCtrl'>
 
 		<!-- Header with logout button -->
 		<header>
@@ -42,13 +42,13 @@
 		<div class="container">
 			
 			<!-- Sign-in/sign-up form: show if userId isn't defined -->
-			<form name="myForm" novalidate>
+			<form ng-show='!userId' name="myForm" novalidate>
 			
 				<!-- Bind model "handle" to this input, set minimum length, and make it required -->
 				<div class="form-group">
 					<label>Handle:</label>
-					<input name="handle" class="form-control">	
-					
+					<input name="handle" class="form-control" ng-model="handle" ng-minlength="6" required>	
+					<p ng-show="myForm.handle.$error.minlength" class="help-block">Handle is invalid.</p>  
 					<!-- Add an error message if the length is too short -->	
 					
 				</div>	
@@ -57,21 +57,23 @@
 				<div class="form-group">
 					<label>Image URL:</label>
 					<img ng-src="{{userImage}}">							
-					<input name="img" class="form-control" ng-model="userImage">
+					<input name="img" class="form-control" ng-model="userImage" required>
+					<p ng-show="myForm.img.$error.img" class="help-block">Url is invalid.</p>  
 				</div>
 
 				<!-- Bind model "email" to this input and make it required -->
 				<div class="form-group">
 					<label>Email:</label>
-					<input  name="email" type="email" class="form-control"></input>
-
+					<input  name="email" type="email" class="form-control" ng-model="email" required></input>
+					<p ng-show="myForm.email.$error.email" class="help-block">Email is invalid.</p>  
 					<!-- Show an error message if the email is not valid -->	
 				</div>
 
 				<!-- Password -->
 				<div class="form-group">
 					<label>Password:</label>
-					<input  name="password" type="password" class="form-control" ng-model="password" required></input>      
+					<input  name="password" type="password" class="form-control" ng-model="password" required></input>  
+					<p ng-show="myForm.password.$error.password" class="help-block">Password is invalid.</p>      
 				</div>
 
 				<!-- Submit buttons: should only be active if certain inputs are valid -->
@@ -96,8 +98,8 @@
 
 							<!-- Bind model newTweet to a textarea element.
 								set a maximum length of 140 characters -->					
-							<textarea placeholder="What's Happening..." ng-model="newTweet" name="text" class="form-control" requred ng-maxlength="140"></textarea>
-							
+							<textarea placeholder="What's Happening..." ng-model="newTweet" name="text" class="form-control" requred ng-maxlength="140"></textarea>					
+							<p ng-show="tweet-input.text.$error.maxlength" class="help-block">Handle is invalid.</p>  
 							<!-- Tweet button -->
 							<div class="form-group send-tweet">
 
@@ -114,28 +116,28 @@
 				<div>
 
 					<!-- Use ng-repeat directive to repeat a div for each element in tweets -->
-					<div class="tweet-box">
+					<div class="tweet-box" ng-repeat="tweet in tweets | orderBy:'-time'">
 						<div>
 							<!-- Put an img tag that shows the userImage of that tweet -->
 							<img class="image" ng-src="{{users[tweet.userId].userImage}}"></img>
 							
 							<!-- Put in the twitter handle and time of tweet -->
-							<span class="handle"></span>
-							<span class="time"></span>
+							<span class="handle" ng-bind='users[tweet.userId].handle'></span>
+							<span class="time" ng-bind='tweet.time | date'></span>
 						</div>
 
 						<!-- Put in the text of the tweet -->
-						<div class="tweet">
+						<div class="tweet" ng-bind='tweet.text'>
 							
 						</div>
 
 						<!-- Create a section for showing tweet likes -->
-						<div class="likes">
+						<div class="likes" >
 							<!-- Show a heart icon that, when clicked, 
 								passes your tweet to your "like" function -->
-							<i></i>
+							<i ng-click='like(tweet)' class='fa fa-heart'> </i>
 							<!-- Show your total number of likes -->
-							<span></span>
+							<span ng-bind='tweet.likes'></span>
 						</div>
 					</div>
 				</div>
